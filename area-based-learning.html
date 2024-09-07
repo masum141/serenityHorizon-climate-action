@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area-Based Learning</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bt.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 400px; width: 100%; }
+        .dropdown { margin: 10px 0; }
+        .chart-container { margin: 20px 0; }
+        .responsible-parties, .actions { 
+            margin: 20px 0; 
+            display: none; /* Hide initially */
+        }
+        canvas { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Area-Based Learning</h1>
+    </header>
+    <section class="content">
+        <h2>What’s Happening in Your Area?</h2>
+        <p>Use the map to select your area and explore climate actions and impacts specific to your region.</p>
+        
+        <!-- Map Container -->
+        <div id="map"></div>
+        
+        <!-- Dropdowns for Country, Division, and District -->
+        <div class="dropdown">
+            <label for="country">Select Country:</label>
+            <select id="country">
+                <option value="">--Choose a country--</option>
+                <option value="bd">Bangladesh</option>
+                <!-- Add other countries here -->
+            </select>
+        </div>
+        
+        <div class="dropdown" id="division-dropdown" style="display:none;">
+            <label for="division">Select Division:</label>
+            <select id="division">
+                <option value="">--Choose a division--</option>
+                <option value="dhaka">Dhaka</option>
+                <option value="chattogram">Chattogram</option>
+                <option value="khulna">Khulna</option>
+                <!-- Add other divisions here -->
+            </select>
+        </div>
+        
+        <div class="dropdown" id="district-dropdown" style="display:none;">
+            <label for="district">Select District:</label>
+            <select id="district">
+                <option value="">--Choose a district--</option>
+                <option value="dhaka">Dhaka</option>
+                <option value="gazipur">Gazipur</option>
+                <option value="narayanganj">Narayanganj</option>
+                <!-- Add other districts here -->
+            </select>
+        </div>
+        
+        <!-- Chart Placeholder -->
+        <div class="chart-container">
+            <h2>Climate Change Effects</h2>
+            <canvas id="chart"></canvas>
+        </div>
+        
+        <!-- Responsible Parties and Actions -->
+        <div class="responsible-parties">
+            <h2>Responsible Parties</h2>
+            <ul id="responsible-list">
+                <!-- List items will be added dynamically -->
+            </ul>
+        </div>
+        
+        <div class="actions">
+            <h2>What You Can Do</h2>
+            <ul id="actions-list">
+                <!-- List items will be added dynamically -->
+            </ul>
+        </div>
+    </section>
+    <div class="navigation">
+        <a href="real-time-data.html">
+            <button id="prevBtn">Previous</button>
+        </a>
+        <a href="future-occurrence.html">
+            <button id="nextBtn">Next</button>
+        </a>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([23.685, 90.3563], 6); // Center on Bangladesh
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Event listeners for dropdown changes
+        document.getElementById('country').addEventListener('change', function() {
+            var country = this.value;
+            if (country === 'bd') {
+                document.getElementById('division-dropdown').style.display = 'block';
+            } else {
+                document.getElementById('division-dropdown').style.display = 'none';
+                document.getElementById('district-dropdown').style.display = 'none';
+                document.querySelector('.responsible-parties').style.display = 'none';
+                document.querySelector('.actions').style.display = 'none';
+            }
+            document.getElementById('division').innerHTML = `
+                <option value="">--Choose a division--</option>
+                <option value="dhaka">Dhaka</option>
+                <option value="chattogram">Chattogram</option>
+                <option value="khulna">Khulna</option>
+            `;
+            document.getElementById('district').innerHTML = `
+                <option value="">--Choose a district--</option>
+                <option value="dhaka">Dhaka</option>
+                <option value="gazipur">Gazipur</option>
+                <option value="narayanganj">Narayanganj</option>
+            `;
+        });
+
+        document.getElementById('division').addEventListener('change', function() {
+            document.getElementById('district-dropdown').style.display = 'block';
+        });
+
+        document.getElementById('district').addEventListener('change', function() {
+            updateChart();
+            updateResponsibleList();
+            updateActionsList();
+        });
+
+        // Sample chart
+        function updateChart() {
+            var ctx = document.getElementById('chart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['CO2 Emissions', 'Deforestation', 'Industrial Pollution'],
+                    datasets: [{
+                        label: 'Climate Change Effects',
+                        data: [30, 20, 40],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Show responsible parties and actions after the chart is updated
+            document.querySelector('.responsible-parties').style.display = 'block';
+            document.querySelector('.actions').style.display = 'block';
+        }
+
+        function updateResponsibleList() {
+            var list = document.getElementById('responsible-list');
+            list.innerHTML = `
+                <li>Name of Industries</li>
+                <li>Name of Org who cutting down trees</li>
+                <li>Illegal river digging</li>
+                <li>Community Organizations</li>
+            `;
+        }
+
+        function updateActionsList() {
+            var list = document.getElementById('actions-list');
+            list.innerHTML = `
+                <li>Make aware the Industries</li>
+                <li>Stop cutting trees</li>
+                <li>Support sustainable practices</li>
+                <li>Advocate for policy changes</li>
+            `;
+        }
+    </script>
+</body>
+</html>

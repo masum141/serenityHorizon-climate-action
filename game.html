@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Action RPG</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <h1>Climate Action RPG</h1>
+
+    <!-- Role Selection -->
+    <div id="role-selection">
+        <h2>Select Your Role</h2>
+        <select id="role">
+            <option value="student">Student</option>
+            <option value="job_holder">Job Holder</option>
+            <option value="industry_owner">Industry Owner</option>
+            <option value="industry_owner">Lumber Owner</option>
+        </select>
+        <button onclick="nextStep('home-selection')">Next</button>
+    </div>
+
+    <!-- Home and Transportation Selection -->
+    <div id="home-selection" style="display:none;">
+        <h2>Select Your Home and Transportation</h2>
+        <label><input type="checkbox" value="car"> Car</label>
+        <label><input type="checkbox" value="electric_car"> Electric Car</label>
+        <label><input type="checkbox" value="bike"> Bike</label>
+        <label><input type="checkbox" value="bicycle"> Bicycle</label>
+        <label><input type="checkbox" value="air_conditioner"> Air Conditioner</label>
+        <label><input type="checkbox" value="heater"> Heater</label>
+        <button onclick="nextStep('organization-selection')">Next</button>
+    </div>
+
+    <!-- Organization Selection -->
+    <div id="organization-selection" style="display:none;">
+        <h2>Select Your Organization</h2>
+        <select id="organization">
+            <option value="lumber">Lumber Organization</option>
+            <option value="industrial">Industrial Organization</option>
+            <option value="climate_ngo">Etc</option>
+        </select>
+        <button onclick="showImpact()">Show Impact</button>
+    </div>
+
+    <!-- Impact Popup -->
+    <div id="impact-popup" style="display:none;">
+        <h2>Impact of Your Choices</h2>
+        <p id="impact-message"></p>
+        <button onclick="nextStep('actions')">Continue</button>
+    </div>
+
+    <!-- Actions Selection -->
+    <div id="actions" style="display:none;">
+        <h2>What Do You Want to Do Now?</h2>
+        <button onclick="showActionImpact('cut_tree')">Cut Trees</button>
+        <button onclick="showActionImpact('industrial_work')">Industry Work</button>
+        <button onclick="showActionImpact('alter_river')">Alter River</button>
+    </div>
+
+    <!-- Action Impact Popup -->
+    <div id="action-impact-popup" style="display:none;">
+        <h2>Action Impact</h2>
+        <p id="action-impact-message"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

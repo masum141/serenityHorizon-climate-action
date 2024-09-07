@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Data Entry</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, #6AB7FF, #1C82E3);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        .content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .map-container {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        .chart {
+            width: 48%;
+            height: 300px;
+        }
+        .navigation {
+            text-align: center;
+            margin: 2rem;
+        }
+        .navigation button {
+            background-color: #1C82E3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 10px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Real-Time Data Entry</h1>
+        <h6>This can be connected with a geo-satellite for real-time data entry about climate change, its effects, and who is responsible for it. We can see our area information by choosing it from the map! We can also know from here what should be done for our area.</h6>
+    </header>
+    <section class="content">
+        <div class="map-container" id="map"></div>
+
+        <div class="chart-container">
+            <canvas id="climateEffectChart" class="chart"></canvas>
+            <canvas id="climateRiskChart" class="chart"></canvas>
+        </div>
+    </section>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <h3>Analysis Information</h3>
+        <p id="analysisContent">Select an area and time period to see the analysis.</p>
+    </div>
+
+    <div class="navigation">
+        <a href="case-study.html">
+            <button id="prevBtn">Previous</button>
+        </a>
+        <a href="area-based-learning.html">
+            <button id="nextBtn">Next</button>
+        </a>
+    </div>
+
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Dummy data for demonstration
+        const areas = {
+            'region1': {
+                climateEffects: [30, 40, 50, 60, 70],
+                risks: [20, 30, 50, 40, 60],
+                workers: 'Local climate action groups and NGOs.',
+            },
+            // Add data for other regions
+        };
+
+        // Initialize charts
+        const ctxEffect = document.getElementById('climateEffectChart').getContext('2d');
+        const climateEffectChart = new Chart(ctxEffect, {
+            type: 'bar',
+            data: {
+                labels: ['Deforestation', 'CO2', 'Effect 3', 'Effect 4', 'Effect 5'],
+                datasets: [{
+                    label: 'Climate Effects',
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctxRisk = document.getElementById('climateRiskChart').getContext('2d');
+        const climateRiskChart = new Chart(ctxRisk, {
+            type: 'bar',
+            data: {
+                labels: ['Risk 1', 'Risk 2', 'Risk 3', 'Risk 4', 'Risk 5'],
+                datasets: [{
+                    label: 'Climate Risks',
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Function to update charts with data for selected area
+        function updateCharts(area) {
+            if (areas[area]) {
+                const data = areas[area];
+
+                climateEffectChart.data.datasets[0].data = data.climateEffects;
+                climateRiskChart.data.datasets[0].data = data.risks;
+                climateEffectChart.update();
+                climateRiskChart.update();
+
+                // Dummy data for workers and responsible entities
+                console.log('Workers for climate action:', data.workers);
+            }
+        }
+
+        // Function to simulate data update every 5 seconds
+        function simulateDataUpdate() {
+            setInterval(() => {
+                // Here you would fetch and update real-time data
+                const selectedArea = 'region1'; // Example static selection
+                updateCharts(selectedArea);
+            }, 5000);
+        }
+
+        // Simulate data updates
+        simulateDataUpdate();
+
+        // Example click event to simulate area selection
+        map.on('click', function(e) {
+            const area = 'region1'; // Example static area
+            updateCharts(area);
+            map.setView(e.latlng, 13); // Zoom in to clicked location
+        });
+    </script>
+</body>
+</html>

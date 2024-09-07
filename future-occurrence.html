@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Occurrence</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bt.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Basic styles for the graph and selectors */
+        .graph-container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .selectors {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .selectors select {
+            font-size: 16px;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        /* Styles for the popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .popup h3 {
+            margin-top: 0;
+        }
+
+        /* Styles for overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Future Occurrence</h1>
+    </header>
+    <section class="content">
+        <h2>Global Future Scenarios</h2>
+        <p>Explore dynamic charts predicting future climate events worldwide.</p>
+
+        <h2>Local Future Scenarios</h2>
+        <p>Explore dynamic charts predicting future climate events in your area.</p>
+
+        <h2>What You Should Do</h2>
+        <p>Suggestions on actions you should take to mitigate future climate risks.</p>
+    </section>
+
+    <!-- Selectors Section -->
+    <section class="selectors">
+        <label for="area">Choose an area:</label>
+        <select id="area">
+            <option value="region1">Region 1</option>
+            <option value="region2">Region 2</option>
+            <option value="region3">Region 3</option>
+            <option value="region4">Region 4</option>
+            <option value="region5">Region 5</option>
+        </select>
+
+        <label for="timePeriod">Choose a future period:</label>
+        <select id="timePeriod">
+            <option value="5">5 Years</option>
+            <option value="10">10 Years</option>
+            <option value="50">50 Years</option>
+        </select>
+    </section>
+
+    <!-- Graph Section -->
+    <section class="graph-container">
+        <canvas id="climateChart"></canvas>
+    </section>
+
+    <!-- Popup Section -->
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <h3>Analysis Information</h3>
+        <p id="analysisContent">Select an area and time period to see the analysis.</p>
+    </div>
+
+    <div class="navigation">
+        <a href="area-based-learning.html">
+            <button id="prevBtn">Previous</button>
+        </a>
+        <a href="vr-section.html">
+            <button id="nextBtn">Next</button>
+        </a>
+    </div>    
+
+    <script>
+        // Initial graph setup
+        const ctx = document.getElementById('climateChart').getContext('2d');
+        const climateChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], // Sample labels
+                datasets: [{
+                    label: 'Climate Change Effects',
+                    data: [10, 20, 30, 40, 50, 60], // Sample data
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                elements: {
+                    line: {
+                        borderWidth: 3
+                    }
+                },
+                scales: {
+                    r: {
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to show the popup
+        function showPopup(message) {
+            document.getElementById('analysisContent').innerText = message;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+            
+            // Automatically close the popup after 2 seconds
+            setTimeout(closePopup, 2000);
+        }
+
+        // Function to close the popup
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Function to update the chart and show analysis based on the selected time period and area
+        function updateChart() {
+            const period = document.getElementById('timePeriod').value;
+            const area = document.getElementById('area').value;
+            let newLabels, newData, analysisMessage;
+
+            // Example data for different areas
+            const areaData = {
+                region1: {
+                    5: { labels: ['2020', '2021', '2022', '2023', '2024'], data: [10, 20, 30, 40, 50] },
+                    10: { labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'], data: [15, 25, 35, 45, 55, 65, 75, 85, 95, 105] },
+                    50: { labels: ['1974', '1984', '1994', '2004', '2014', '2024'], data: [20, 40, 60, 80, 100, 120] }
+                },
+                region2: {
+                    5: { labels: ['2020', '2021', '2022', '2023', '2024'], data: [12, 22, 32, 42, 52] },
+                    10: { labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'], data: [17, 27, 37, 47, 57, 67, 77, 87, 97, 107] },
+                    50: { labels: ['1974', '1984', '1994', '2004', '2014', '2024'], data: [22, 42, 62, 82, 102, 122] }
+                },
+                region3: {
+                    5: { labels: ['2020', '2021', '2022', '2023', '2024'], data: [14, 24, 34, 44, 54] },
+                    10: { labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'], data: [19, 29, 39, 49, 59, 69, 79, 89, 99, 109] },
+                    50: { labels: ['1974', '1984', '1994', '2004', '2014', '2024'], data: [24, 44, 64, 84, 104, 124] }
+                },
+                region4: {
+                    5: { labels: ['2020', '2021', '2022', '2023', '2024'], data: [16, 26, 36, 46, 56] },
+                    10: { labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'], data: [21, 31, 41, 51, 61, 71, 81, 91, 101, 111] },
+                    50: { labels: ['1974', '1984', '1994', '2004', '2014', '2024'], data: [26, 46, 66, 86, 106, 126] }
+                },
+                region5: {
+                    5: { labels: ['2020', '2021', '2022', '2023', '2024'], data: [18, 28, 38, 48, 58] },
+                    10: { labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'], data: [23, 33, 43, 53, 63, 73, 83, 93, 103, 113] },
+                    50: { labels: ['1974', '1984', '1994', '2004', '2014', '2024'], data: [28, 48, 68, 88, 108, 128] }
+                }
+            };
+
+            const selectedData = areaData[area][period];
+            newLabels = selectedData.labels;
+            newData = selectedData.data;
+
+            if (period == '5') {
+                analysisMessage = 'In the next 5 years, climate change effects in ' + area + ' are projected to increase rapidly.';
+            } else if (period == '10') {
+                analysisMessage = 'In the next 10 years, climate effects in ' + area + ' will significantly rise with increasing temperature trends.';
+            } else if (period == '50') {
+                analysisMessage = 'Over the next 50 years, the impact of climate change in ' + area + ' will be dramatic, with major consequences for ecosystems and human systems.';
+            }
+
+            climateChart.data.labels = newLabels;
+            climateChart.data.datasets[0].data = newData;
+            climateChart.update();
+
+            showPopup(analysisMessage);
+        }
+
+        // Event listeners for selectors
+        document.getElementById('timePeriod').addEventListener('change', updateChart);
+        document.getElementById('area').addEventListener('change', updateChart);
+
+        // Initial chart update
+        updateChart();
+    </script>
+</body>
+</html>

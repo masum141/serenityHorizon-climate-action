@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bt.css">
+    <link rel="stylesheet" href="case.css">
+</head>
+<body>
+    <header>
+        <h1>Case Study</h1>
+    </header>
+    <section class="content">
+        <h2>Interviews</h2>
+        <p>Information about interviews conducted related to climate action.</p>
+
+        <!-- Filter Dropdown -->
+        <div class="filter">
+            <label for="areaSelect">Select Area:</label>
+            <select id="areaSelect">
+                <option value="all">All</option>
+                <option value="area1">Area 1</option>
+                <option value="area2">Area 2</option>
+                <option value="area3">Area 3</option>
+                <option value="area4">Area 4</option>
+                <option value="area5">Area 5</option>
+            </select>
+        </div>
+
+        <!-- Cards Section for Interviews -->
+        <div class="cards interview-cards">
+            <div class="card" data-area="area1">Interview 1</div>
+            <div class="card" data-area="area2">Interview 2</div>
+            <div class="card" data-area="area3">Interview 3</div>
+            <div class="card" data-area="area4">Interview 4</div>
+            <div class="card" data-area="area5">Interview 5</div>
+            <div class="card" data-area="area1">Interview 6</div>
+            <div class="card" data-area="area2">Interview 7</div>
+            <div class="card" data-area="area3">Interview 8</div>
+            <div class="card" data-area="area4">Interview 9</div>
+            <div class="card" data-area="area5">Interview 10</div>
+        </div>
+
+        <h2>Recent Occurrence</h2>
+        <p>Information about Recent Occurrence</p>
+
+        <!-- Cards Section for Occurrences -->
+        <div class="cards occurrence-cards">
+            <div class="card" data-area="area1">Occurrence 1</div>
+            <div class="card" data-area="area2">Occurrence 2</div>
+            <div class="card" data-area="area3">Occurrence 3</div>
+            <div class="card" data-area="area4">Occurrence 4</div>
+            <div class="card" data-area="area5">Occurrence 5</div>
+            <div class="card" data-area="area1">Occurrence 6</div>
+            <div class="card" data-area="area2">Occurrence 7</div>
+            <div class="card" data-area="area3">Occurrence 8</div>
+            <div class="card" data-area="area4">Occurrence 9</div>
+            <div class="card" data-area="area5">Occurrence 10</div>
+        </div>
+    </section>
+
+    <div class="navigation">
+        <a href="real-life-occurrence.html">
+            <button id="prevBtn">Previous</button>
+        </a>
+        <a href="real-time-data.html">
+            <button id="nextBtn">Next</button>
+        </a>
+    </div>
+
+    <script src="case.js"></script>
+</body>
+</html>
